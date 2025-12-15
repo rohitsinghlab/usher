@@ -15,6 +15,10 @@ USHER enables foundation models to process diverse, out-of-distribution data sou
 - **GPU acceleration**: Full PyTorch implementation with CUDA support
 - **Flexible metrics**: Support for both cosine and Euclidean distance metrics
 
+## Example Notebook
+
+For a complete walkthrough, see the [scGPT example notebook](example_notebooks/scGPT_example.ipynb) which demonstrates aligning Xenium spatial transcriptomics data to scRNA-seq using scGPT embeddings.
+
 
 ## Citation
 
