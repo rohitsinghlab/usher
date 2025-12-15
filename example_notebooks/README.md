@@ -1,13 +1,7 @@
 ## Installation
 
 ```bash
-# Required packages
-pip install torch torchvision
-pip install scanpy anndata
-pip install POT  # Python Optimal Transport
-pip install numpy pandas scipy
-pip install matplotlib seaborn
-pip install tqdm
+pip -r requirements.txt
 ```
 
 ## Quick Start
