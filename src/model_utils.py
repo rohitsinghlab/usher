@@ -58,6 +58,7 @@ class FeatureTransform(nn.Module):
         super().__init__()
         self.input_dim = input_dim
         self.output_dim = output_dim
+        self.hidden_dim = hidden_dim
         self.use_residual = (hidden_dim is not None) and (input_dim == output_dim)
 
         if hidden_dim is None:
@@ -210,7 +211,7 @@ def save_alignment_model(
         logging.info(f"Model saved to {save_path} (no scaler - cosine metric)")
 
 
-def load_alignment_model(load_path: str, device: Optional[str] = None):
+def load_alignment_model(load_path: str, device: Optional[str] = None, hidden_dim: Optional[int] = None):
     """
     Load trained alignment model from disk.
 
@@ -239,7 +240,7 @@ def load_alignment_model(load_path: str, device: Optional[str] = None):
     model = FeatureTransform(
         input_dim=checkpoint['input_dim'],
         output_dim=checkpoint['output_dim'],
-        hidden_dim=None  # Will be inferred from state_dict
+        hidden_dim=hidden_dim  # Will be inferred from state_dict
     )
 
     # Load weights
