@@ -31,14 +31,14 @@ pip install tqdm
 
 ```python
 import anndata as ad
-from src.spot_alignment_sinkhorn_features_only import align_features_sinkhorn
+from src.run_usher import align_features_fgw
 
 # Load your data
 adata_source = ad.read_h5ad('source.h5ad')
 adata_target = ad.read_h5ad('target.h5ad')
 
 # Run alignment
-model, mapping, concat_adata, T_full, feature_mean, feature_std = align_features_sinkhorn(
+model, mapping, concat_adata, T_full, feature_mean, feature_std = align_features_fgw(
     adata_source,
     adata_target,
     sampling_strategy='spatial',  # or 'celltype'
