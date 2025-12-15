@@ -30,10 +30,6 @@ from src.model_utils import save_alignment_model
 save_alignment_model(model, 'alignment_model.pt', feature_mean, feature_std)
 ```
 
-## Example Notebook
-
-For a complete walkthrough, see the [scGPT example notebook](example_notebooks/scGPT_example.ipynb) which demonstrates aligning Xenium spatial transcriptomics data to scRNA-seq using scGPT embeddings.
-
 ### Dataset Download
 
 The example datasets can be downloaded from Google Drive:
