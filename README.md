@@ -108,16 +108,8 @@ Input data should be AnnData objects with:
 
 ## Citation
 
-If you use this code, please cite:
-@article{pratapa-2025, 
-	author = {Pratapa, Aditya and Tata, Purushothama Rao and Singh, Rohit},
-	journal = {bioRxiv (Cold Spring Harbor Laboratory)},
-	month = {11},
-	title = {{USHER: Guiding Foundation Model Representations through Distribution Shifts}},
-	year = {2025},
-	doi = {10.1101/2025.11.20.689462},
-	url = {[https://doi.org/10.1101/2025.11.20.689462](https://doi.org/10.1101/2025.11.20.689462)},
-}
+If you use this code, please cite: Pratapa, A., Tata, P. R., & Singh, R. (2025). **USHER: Guiding Foundation Model Representations through Distribution Shifts**.  *bioRxiv*. Cold Spring Harbor Laboratory. DOI: [10.1101/2025.11.20.689462](https://doi.org/10.1101/2025.11.20.689462)
+
 ## License
 
 CC BY NC SA 4.0
