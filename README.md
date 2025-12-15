@@ -67,7 +67,7 @@ Place the downloaded files in the `datasets/` directory.
 ## Main Components
 
 ### Core Alignment Module
-- `spot_alignment_sinkhorn_features_only.py`: Main alignment function with E-M algorithm
+- `run_usher.py`: Main alignment function with E-M algorithm
 
 ### Utility Modules
 - `e_step_utils.py`: Transport computation and optimal transport utilities
@@ -77,10 +77,7 @@ Place the downloaded files in the `datasets/` directory.
 - `celltype_utils.py`: Cell type-based sampling strategies
 - `plot_utils.py`: Visualization utilities
 
-### Test Scripts
-- `test_normalization_fix.py`: Verify feature normalization
-- `test_spatial_windowing.py`: Test spatial windowing strategies
-- `test_sampling_strategies.py`: Compare different sampling approaches
+
 
 ## Algorithm Overview
 
@@ -136,7 +133,7 @@ If you use this code, please cite:
 	author = {Pratapa, Aditya and Tata, Purushothama Rao and Singh, Rohit},
 	journal = {bioRxiv (Cold Spring Harbor Laboratory)},
 	month = {11},
-	title = {{Transforming biological foundation model representations for Out-of-Distribution data}},
+	title = {{USHER: Guiding Foundation Model Representations through Distribution Shifts}},
 	year = {2025},
 	doi = {10.1101/2025.11.20.689462},
 	url = {https://doi.org/10.1101/2025.11.20.689462},
