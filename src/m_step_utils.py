@@ -521,13 +521,17 @@ def train_global_model(
         S_target_init = torch.cdist(target_features[:1000], target_features[:1000], p=2) if target_features.shape[0] > 1000 else torch.cdist(target_features, target_features, p=2)
         init_struct = F.mse_loss(S_target_init, S_source_init)
 
-        init_swd = sliced_wasserstein_distance(source_transformed_init, target_features, 128)
-        init_mmd = maximum_mean_discrepancy(source_transformed_init, target_features)
+        #init_swd = sliced_wasserstein_distance(source_transformed_init, target_features, 128)
+        #init_mmd = maximum_mean_discrepancy(source_transformed_init, target_features)
+        init_swd = 0
+        init_mmd = 0
 
         logging.info(f"    Initial cross loss ({metric}): {init_cross.item():.6f}")
         logging.info(f"    Initial struct loss: {init_struct.item():.6f}")
-        logging.info(f"    Initial SWD loss: {init_swd.item():.6f}")
-        logging.info(f"    Initial MMD loss: {init_mmd.item():.6f}")
+       #logging.info(f"    Initial SWD loss: {init_swd.item():.6f}")
+        #logging.info(f"    Initial MMD loss: {init_mmd.item():.6f}")
+        logging.info(f"    Initial SWD loss: 0")
+        logging.info(f"    Initial MMD loss: 0") 
 
     for step in range(steps_per_iter):
         optimizer.zero_grad()
@@ -542,11 +546,22 @@ def train_global_model(
             loss_cross = (1.0 - (source_norm * target_norm).sum(dim=1)).mean()
         else:  # euclidean
             loss_cross = F.mse_loss(source_transformed, target_features)
-
+        
         # ===== Loss 2: Distribution matching via SWD and MMD =====
-        loss_swd = sliced_wasserstein_distance(source_transformed, target_features, n_projections=128)
-        loss_mmd = maximum_mean_discrepancy(source_transformed, target_features)
-
+        #loss_swd = sliced_wasserstein_distance(source_transformed, target_features, n_projections=128)
+        #loss_mmd = maximum_mean_discrepancy(source_transformed, target_features)
+        loss_swd = 0
+        loss_mmd = 0
+        loss_var = (source_transformed.std(dim=0) - target_features.std(dim=0)).abs().mean()
+        if not model.use_residual:
+            #logging.info(f"  [M-step] No hidden dimension - computing regularization")
+            W = model.net.weight
+            identity = torch.eye(W.shape[0], W.shape[1], device=W.device)
+            #loss_reg = ((W - identity)**2).mean()
+        else:
+            #logging.info(f"  [M-step] Hidden dimension - no regularization")
+            loss_reg = 0
+        loss_reg = 0
         # ===== Loss 3: Structure preservation =====
         n_train = source_features.shape[0]
         if structure_sample_size is not None and n_train > structure_sample_size:
@@ -557,6 +572,8 @@ def train_global_model(
 
             S_source = torch.cdist(source_sample, source_sample, p=2)
             S_target = torch.cdist(target_sample, target_sample, p=2)
+            S_source = S_source / (S_source.mean() + 1e-8)
+            S_target = S_target / (S_target.mean() + 1e-8)
             loss_struct = F.mse_loss(S_target, S_source)
         else:
             # Use all data
@@ -566,8 +583,10 @@ def train_global_model(
 
         # ===== Combined loss =====
         # Split lambda_var between SWD and MMD (both encourage distribution matching)
-        loss = lambda_cross * loss_cross + lambda_struct * loss_struct + \
-               lambda_var * (0.5 * loss_swd + 0.5 * loss_mmd)
+
+        # loss = lambda_cross * loss_cross + lambda_struct * loss_struct + \
+        #        lambda_var * (0.5 * loss_swd + 0.5 * loss_mmd) + lambda_var * loss_var + 0.1 * loss_reg
+        loss = lambda_cross * loss_cross + lambda_var * loss_var
 
         # Check for nan/inf
         if not torch.isfinite(loss):
@@ -582,10 +601,21 @@ def train_global_model(
 
         # Log progress
         if (step + 1) % 10 == 0 or step == 0:
-            logging.info(f"  Step {step+1}/{steps_per_iter}: loss={loss.item():.6f} "
-                        f"(cross={loss_cross.item():.4f}, struct={loss_struct.item():.4f}, "
-                        f"swd={loss_swd.item():.4f}, mmd={loss_mmd.item():.4f})")
+            if model.use_residual:
+                # logging.info(f"  Step {step+1}/{steps_per_iter}: loss={loss.item():.6f} "
+                #             f"(cross={loss_cross.item():.4f}, struct={loss_struct.item():.4f}, "f"swd={loss_swd.item():.4f}, mmd={loss_mmd.item():.4f}), var={loss_var.item():.4f}, reg=0")
+                logging.info(f"  Step {step+1}/{steps_per_iter}: loss={loss.item():.6f} "
+                            f"(cross={loss_cross.item():.4f}, var={loss_var.item():.4f})")
+            else:
+                # logging.info(f"  Step {step+1}/{steps_per_iter}: loss={loss.item():.6f} "
+                #             f"(cross={loss_cross.item():.4f}, struct={loss_struct.item():.4f}, "
+                #             f"swd={loss_swd.item():.4f}, mmd={loss_mmd.item():.4f}), var={loss_var.item():.4f}, reg={loss_reg.item():.4f}")
+                logging.info(f"  Step {step+1}/{steps_per_iter}: loss={loss.item():.6f} "
+                            f"(cross={loss_cross.item():.4f}, var={loss_var.item():.4f})")
 
+                # logging.info(f"  Step {step+1}/{steps_per_iter}: loss={loss.item():.6f} "
+                #             f"(cross={loss_cross.item():.4f}, struct={loss_struct.item():.4f}, "
+                #             f"swd={loss_swd.item():.4f}, mmd={loss_mmd.item():.4f}), var={loss_var.item():.4f}, reg={loss_reg.item():.4f}")
     # ===== DIAGNOSTIC: Feature magnitudes AFTER training =====
     with torch.no_grad():
         source_transformed_final = model(source_features)

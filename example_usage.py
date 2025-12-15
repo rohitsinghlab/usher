@@ -19,7 +19,7 @@ import pandas as pd
 # Add src to path
 sys.path.append('src')
 
-from spot_alignment_sinkhorn_features_only import align_features_sinkhorn
+from run_usher import align_features_fgw
 from model_utils import save_alignment_model, load_alignment_model, apply_alignment_model
 
 
@@ -73,7 +73,7 @@ def main():
     print(f"Using device: {device}")
 
     # Run alignment with spatial windowing
-    model, mapping, concat_adata, T_full, feature_mean, feature_std = align_features_sinkhorn(
+    model, mapping, concat_adata, T_full, feature_mean, feature_std = align_features_fgw(
         adata_source,
         adata_target,
         sampling_strategy='spatial',  # Use spatial windowing

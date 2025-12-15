@@ -46,8 +46,8 @@ def compute_transport_ot(
     aux_features_target : np.ndarray, optional
         Cell type probabilities for target (n_target, n_celltypes)
     gamma : float
-        Weight for feature distance: M = (1-gamma)*M_aux + gamma*M_features
-        If iteration=0, gamma is forced to 0.0
+        Weight for feature distance: M = (gamma)*M_aux + (1-gamma)*M_features
+        If iteration=0, gamma is forced to 1.0
     epsilon : float
         Entropic regularization parameter for Sinkhorn
     metric : str
@@ -68,7 +68,7 @@ def compute_transport_ot(
     n_target = features_target.shape[0]
 
     # Force gamma=0 for iteration 0 (pure cell type matching)
-    gamma_effective = 0.0 if iteration == 0 else gamma
+    gamma_effective = 1.0 if iteration == 0 else gamma
 
     # ===== Compute Cost Matrix M =====
     if aux_features_source is not None and aux_features_target is not None:
@@ -98,7 +98,7 @@ def compute_transport_ot(
         M_features = M_features / (M_features.max().clamp(min=1e-8))
 
         # Part 3: Combine
-        M = (1.0 - gamma_effective) * M_aux + gamma_effective * M_features
+        M = ( gamma_effective) * M_aux + (1-gamma_effective) * M_features
 
         logging.info(f"  OT cost matrix: gamma={gamma_effective:.2f}, M_aux.mean={M_aux.mean():.4f}, M_features.mean={M_features.mean():.4f}")
     else:
@@ -309,7 +309,7 @@ def compute_transport_fgw(
     aux_features_target : np.ndarray, optional
         Cell type probabilities for target (n_target, n_celltypes)
     gamma : float
-        Weight for feature distance in M: M = (1-gamma)*M_aux + gamma*M_features
+        Weight for feature distance in M: M = (gamma)*M_aux + (1-gamma)*M_features
         If iteration=0, gamma is forced to 0.0
     epsilon : float
         Entropic regularization parameter
@@ -339,7 +339,7 @@ def compute_transport_fgw(
     n_target = features_target.shape[0]
 
     # Force gamma=0 for iteration 0 (pure cell type matching)
-    gamma_effective = 0.0 if iteration == 0 else gamma
+    gamma_effective = 1.0 if iteration == 0 else gamma
 
     # ===== PART 1: Compute structure matrices C1, C2 (same as GW) =====
     if use_knn_graph:
@@ -389,7 +389,7 @@ def compute_transport_fgw(
         M_features = M_features / (M_features.max().clamp(min=1e-8))
 
         # Part 2C: Combine
-        M = (1.0 - gamma_effective) * M_aux + gamma_effective * M_features
+        M = (gamma_effective) * M_aux + (1-gamma_effective) * M_features
 
         logging.info(f"  FGW: gamma={gamma_effective:.2f}, M_aux.mean={M_aux.mean():.4f}, M_features.mean={M_features.mean():.4f}")
     else:
@@ -532,9 +532,8 @@ def compute_transport_batch(
         Full source feature matrix
     features_target_all : torch.Tensor
         Full target feature matrix
-
     gamma : float
-        Weight for feature distance in M: M = (1-gamma)*M_celltype + gamma*M_features (OT/FGW only)
+        Weight for feature distance in M: M = (gamma)*M_celltype + (1-gamma)*M_features (OT/FGW only)
     epsilon : float
         Entropic regularization parameter
     auxiliary_features_source : np.ndarray, optional
@@ -556,7 +555,7 @@ def compute_transport_batch(
     device : torch.device
         Computation device
     iteration : int
-        Current iteration (affects gamma: iteration 0 uses gamma=0)
+        Current iteration (affects gamma: iteration 0 uses gamma=1)
     e_step_method : str
         E-step method: 'ot', 'gw', or 'fgw'
     entropy_percentile : float
@@ -701,7 +700,7 @@ def compute_transport_batch(
     row_indices = None
     col_indices = None
     if use_linear_assignment:
-        gamma_effective = 0.0 if iteration == 0 else gamma
+        gamma_effective = 1.0 if iteration == 0 else gamma
         T, row_indices, col_indices = apply_linear_assignment(
             T, gamma_effective, e_step_method, M=None
         )
