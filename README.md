@@ -95,27 +95,7 @@ The alignment process follows an Expectation-Maximization approach:
      - Structure preservation loss
      - Distribution matching (variance loss/preservation)
 
-## Recent Improvements
 
-### Feature Normalization Fix
-- Fixed issue with negative cosine distances by ensuring consistent normalization
-- Both source and target features are properly normalized based on the chosen metric
-
-### Distribution Matching
-- Variance preservation loss
-## Parameters
-
-Key parameters for `align_features_sinkhorn`:
-
-- `sampling_strategy`: 'spatial' or 'celltype' - how to create batches
-- `e_step_method`: 'ot', 'gw', or 'fgw' - transport formulation
-- `metric`: 'cosine' or 'euclidean' - distance metric
-- `n_iters`: Number of E-M iterations
-- `gamma`: Weight for feature vs auxiliary information
-- `epsilon`: Entropic regularization strength
-- `lr`: Learning rate for neural network
-- `steps_per_iter`: Training steps per M-step
-- `lambda_cross`, `lambda_var`: Loss component weights
 
 ## Data Format
 
@@ -129,14 +109,14 @@ Input data should be AnnData objects with:
 ## Citation
 
 If you use this code, please cite:
-@article{pratapa-2025,
+@article{pratapa-2025, 
 	author = {Pratapa, Aditya and Tata, Purushothama Rao and Singh, Rohit},
 	journal = {bioRxiv (Cold Spring Harbor Laboratory)},
 	month = {11},
 	title = {{USHER: Guiding Foundation Model Representations through Distribution Shifts}},
 	year = {2025},
 	doi = {10.1101/2025.11.20.689462},
-	url = {https://doi.org/10.1101/2025.11.20.689462},
+	url = {[https://doi.org/10.1101/2025.11.20.689462](https://doi.org/10.1101/2025.11.20.689462)},
 }
 ## License
 
