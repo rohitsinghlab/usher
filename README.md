@@ -60,7 +60,7 @@ For a complete walkthrough, see the [scGPT example notebook](example_notebooks/s
 ### Dataset Download
 
 The example datasets can be downloaded from Google Drive:
-- **[usher_datasets](https://drive.google.com/drive/folders/1U_VW--4BaTaxVQdYLuU1wOwg7aUQmkRU)** - Contains reference scRNA-seq dataset `scRNAseq_scGPT.h5ad` (6.65 GB) and target Xenium spatial transcriptomics dataset `xenium_scGPT.h5ad` (465.5 MB) used in manuscript.
+- **[usher_datasets](https://drive.google.com/drive/folders/1U_VW--4BaTaxVQdYLuU1wOwg7aUQmkRU)** - Contains reference scRNA-seq dataset `scRNAseq_scGPT.h5ad` (6.65 GB) and target Xenium spatial transcriptomics dataset `xenium_scGPT.h5ad` (465.5 MB) used in manuscript. The USHER model is under the `scGPT_example/alignment_model.pt`.
 
 Place the downloaded files in the `datasets/` directory.
 
